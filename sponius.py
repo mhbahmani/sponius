@@ -15,7 +15,6 @@ from bs4 import BeautifulSoup as BS
 def get_request(url):
     try:
         print(url)
-        r = requests.get(url)
     except requests.exceptions.RequestException as e:
         logging.debug(e)
         raise Exception('Request exception has been occurred')
