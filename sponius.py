@@ -14,6 +14,7 @@ from bs4 import BeautifulSoup as BS
 
 def get_request(url):
     try:
+        print(url)
         r = requests.get(url)
     except requests.exceptions.RequestException as e:
         logging.debug(e)
@@ -30,26 +31,36 @@ def lyrics(title, artist=""):
             .replace('by', '') \
             .replace('acoustic', '') \
             .replace('-', '') \
-            .replace('&', 'and')
+            .replace('&', 'and') \
             .strip()
+
+    artist = artist \
+            .lower() \
+            .strip()
+
+    title = title \
+            .lower() \
+            .strip()
+
     try:
-        r = get_request(('https://genius.com/api/search/multi?q='
-                f'{full_title}'))
+        r = get_request('https://orion.apiseeds.com/api/music/lyric/'f'{artist}/'f'{title}?apikey=DX4lAHzQ9HHHCOmeaGldWthkHuV9Fv8d9c3vmvsPFQJFyswVuxd6aHXLBBR4Id6A')
+    
     except Exception as e:
         logging.debug(e)
         return 'Request failed'
 
     try:
-        response = json.loads(r.content)['response']
+        response = json.loads(r.content)['result']
     except ValueError as e:
         logging.debug(e)
         return 'Json decode error'
 
     try:
-        sections = response['sections']
+        sections = response['track']
         if len(sections) == 0:
             return 'Sorry! no lyrics found.'
 
+        return sections['text']
         hits = [
                     (
                         hit,
